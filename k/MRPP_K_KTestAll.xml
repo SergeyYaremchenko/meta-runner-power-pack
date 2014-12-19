@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta-runner name="K - KPM test (all projects)">
+  <description>Runs tests for all ASP.NET 5 projects.</description>
+  <settings>
+    <parameters>
+      <param name="mr.SourceFolder" value="%teamcity.build.workingDir%" spec="text description='Path to the folder where global.json is located.' validationMode='not_empty' label='Path to source code:' display='normal'" />
+    </parameters>
+    <build-runners>
+      <runner name="KPM test all projects" type="simpleRunner">
+        <parameters>
+          <param name="script.content"><![CDATA[@echo off
+cd %teamcity.build.workingDir%
+
+SETLOCAL
+CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% project.json -rec -erroraction 'silentlycontinue' | Where-Object { $_.FullName -like '*test*' } | Select-Object -Expand DirectoryName | Foreach { cmd /C cd $_ `&`& k test -teamcity }; exit $Lastexitcode"]]></param>
+          <param name="teamcity.step.mode" value="execute_if_failed" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <requirements />
+  </settings>
+</meta-runner>
+

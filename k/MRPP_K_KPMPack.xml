@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta-runner name="K - KPM pack">
+  <description>Packages an ASP.NET 5 application into a build artifact.</description>
+  <settings>
+    <parameters>
+      <param name="mr.ArtifactsName" value="artifacts.zip" spec="text description='What should the output artifact name be? Defaults to artifacts.zip if left blank.' validationMode='any' label='Output artifact name:' display='normal'" />
+      <param name="mr.Configuration" value="Release" spec="text description='Build configuration (e.g. Debug or Release)' validationMode='not_empty' label='Build configuration:' display='normal'" />
+      <param name="mr.ProjectJson" value="" spec="text validationMode='not_empty' label='Path to project.json:' display='normal'" />
+    </parameters>
+    <build-runners>
+      <runner name="KPM pack" type="simpleRunner">
+        <parameters>
+          <param name="script.content"><![CDATA[@echo off
+cd %teamcity.build.workingDir%
+
+SETLOCAL
+CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86
+CALL kpm pack "%mr.ProjectJson%" -o artifacts --no-source --overwrite --configuration %mr.Configuration%
+
+@echo on
+echo "##teamcity[publishArtifacts 'artifacts => %mr.ArtifactsName%']"]]></param>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <requirements />
+  </settings>
+</meta-runner>
+

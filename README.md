@@ -30,6 +30,16 @@ Available Meta-Runners
     * [PSGet installer](https://github.com/JetBrains/meta-runner-power-pack/tree/master/psget)
     * [SemVer build number](https://github.com/JetBrains/meta-runner-power-pack/tree/master/semver-buildnumber)
     * [Generate GitHub Release Notes](https://github.com/JetBrains/meta-runner-power-pack/tree/master/githubreleasenotes)
+* ASP.NET 5 / Project K
+	* Install KRE
+	* Convention-based build
+	* Clean sources
+	* Restore packages
+	* Build one project
+	* Build all projects
+	* Test one project
+	* Test all projects
+	* Package application
 
 
 Installation Instructions
