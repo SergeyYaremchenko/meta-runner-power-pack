@@ -2,24 +2,24 @@
 <meta-runner name="K - KPM restore">
   <description>Runs KPM restore for the project.</description>
   <settings>
-    <parameters>
-      <param name="mr.SourceFolder" value="%teamcity.build.workingDir%" spec="text description='Path to the folder where global.json is located.' validationMode='not_empty' label='Path to source code:' display='normal'" />
-    </parameters>
-    <build-runners>
-      <runner name="KPM restore" type="simpleRunner">
-        <parameters>
-          <param name="script.content"><![CDATA[@echo off
+	<parameters>
+	  <param name="mr.SourceFolder" value="%teamcity.build.workingDir%" spec="text description='Path to the folder where global.json is located.' validationMode='not_empty' label='Path to source code:' display='normal'" />
+	</parameters>
+	<build-runners>
+	  <runner name="KPM restore" type="simpleRunner">
+		<parameters>
+		  <param name="script.content"><![CDATA[@echo off
 cd %teamcity.build.workingDir%
 
 SETLOCAL
-CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86
-@powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% global.json -rec -erroraction 'silentlycontinue'  | Select-Object -Expand DirectoryName | Foreach { cmd /C cd $_ `&`& CALL kpm restore }; exit $Lastexitcode"]]></param>
-          <param name="teamcity.step.mode" value="default" />
-          <param name="use.custom.script" value="true" />
-        </parameters>
-      </runner>
-    </build-runners>
-    <requirements />
+CALL packages\KoreBuild\build\dnvm use default -runtime CLR -x86
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% global.json -rec -erroraction 'silentlycontinue'  | Select-Object -Expand DirectoryName | Foreach { cmd /C cd $_ `&`& CALL dnu restore }; exit $Lastexitcode"]]></param>
+		  <param name="teamcity.step.mode" value="default" />
+		  <param name="use.custom.script" value="true" />
+		</parameters>
+	  </runner>
+	</build-runners>
+	<requirements />
   </settings>
 </meta-runner>
 

@@ -2,14 +2,14 @@
 <meta-runner name="K - Build by Konvention">
   <description>Runs an ASP.NET 5 build by convention (clean, restore, build, test).</description>
   <settings>
-    <parameters>
-      <param name="mr.Configuration" value="Release" spec="text description='Build configuration (e.g. Debug or Release)' validationMode='not_empty' label='Build configuration:' display='normal'" />
-      <param name="mr.SourceFolder" value="%teamcity.build.workingDir%" spec="text description='Path to the folder where global.json is located.' validationMode='not_empty' label='Path to source code:' display='normal'" />
-    </parameters>
-    <build-runners>
-      <runner name="Konvention" type="simpleRunner">
-        <parameters>
-          <param name="script.content"><![CDATA[@echo off
+	<parameters>
+	  <param name="mr.Configuration" value="Release" spec="text description='Build configuration (e.g. Debug or Release)' validationMode='not_empty' label='Build configuration:' display='normal'" />
+	  <param name="mr.SourceFolder" value="%teamcity.build.workingDir%" spec="text description='Path to the folder where global.json is located.' validationMode='not_empty' label='Path to source code:' display='normal'" />
+	</parameters>
+	<build-runners>
+	  <runner name="Konvention" type="simpleRunner">
+		<parameters>
+		  <param name="script.content"><![CDATA[@echo off
 cd %teamcity.build.workingDir%
 
 SETLOCAL
@@ -18,28 +18,28 @@ IF EXIST packages\KoreBuild goto run
 %teamcity.tool.NuGet.CommandLine.DEFAULT.nupkg%\tools\nuget.exe install KoreBuild -ExcludeVersion -o packages -nocache -pre -Source https://www.myget.org/F/aspnetvnext/api/v2
 
 :run
-CALL packages\KoreBuild\build\kvm upgrade -runtime CLR -x86
-CALL packages\KoreBuild\build\kvm install default -runtime CoreCLR -x86
-CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86
+CALL packages\KoreBuild\build\dnvm upgrade -runtime CLR -x86
+CALL packages\KoreBuild\build\dnvm install default -runtime CoreCLR -x86
+CALL packages\KoreBuild\build\dnvm use default -runtime CLR -x86
 
 :clean
 @powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% "bin" -Directory -rec -erroraction 'silentlycontinue' | Remove-Item -Recurse; exit $Lastexitcode"
 
 :restore
-@powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% global.json -rec -erroraction 'silentlycontinue'  | Select-Object -Expand DirectoryName | Foreach { cmd /C cd $_ `&`& CALL kpm restore }; exit $Lastexitcode"
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% global.json -rec -erroraction 'silentlycontinue'  | Select-Object -Expand DirectoryName | Foreach { cmd /C cd $_ `&`& CALL dnu restore }; exit $Lastexitcode"
 
 :buildall
-@powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% project.json -rec -erroraction 'silentlycontinue' | Foreach { kpm build $_.FullName --configuration %mr.Configuration% }; exit $Lastexitcode"
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% project.json -rec -erroraction 'silentlycontinue' | Foreach { dnu build $_.FullName --configuration %mr.Configuration% }; exit $Lastexitcode"
 @powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% *.nupkg -rec -erroraction 'silentlycontinue' | Where-Object {$_.FullName -match 'bin'} | Select-Object -Expand FullName | Foreach { Write-Host `#`#teamcity`[publishArtifacts `'$_`'`] }; exit $Lastexitcode"
 
 :testall
 @powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% project.json -rec -erroraction 'silentlycontinue' | Where-Object { $_.FullName -like '*test*' } | Select-Object -Expand DirectoryName | Foreach { cmd /C cd $_ `&`& k test -teamcity }; exit $Lastexitcode"]]></param>
-          <param name="teamcity.step.mode" value="default" />
-          <param name="use.custom.script" value="true" />
-        </parameters>
-      </runner>
-    </build-runners>
-    <requirements />
+		  <param name="teamcity.step.mode" value="default" />
+		  <param name="use.custom.script" value="true" />
+		</parameters>
+	  </runner>
+	</build-runners>
+	<requirements />
   </settings>
 </meta-runner>
 

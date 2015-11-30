@@ -2,11 +2,11 @@
 <meta-runner name="K - Install and configure KLR">
   <description>Installs the latest KLR runtime for ASP.NET 5 builds.</description>
   <settings>
-    <parameters />
-    <build-runners>
-      <runner name="Install and configure KLR" type="simpleRunner">
-        <parameters>
-          <param name="script.content"><![CDATA[@echo off
+	<parameters />
+	<build-runners>
+	  <runner name="Install and configure KLR" type="simpleRunner">
+		<parameters>
+		  <param name="script.content"><![CDATA[@echo off
 cd %teamcity.build.workingDir%
 
 SETLOCAL
@@ -15,15 +15,15 @@ IF EXIST packages\KoreBuild goto run
 %teamcity.tool.NuGet.CommandLine.DEFAULT.nupkg%\tools\nuget.exe install KoreBuild -ExcludeVersion -o packages -nocache -pre -Source https://www.myget.org/F/aspnetvnext/api/v2
 
 :run
-CALL packages\KoreBuild\build\kvm upgrade -runtime CLR -x86
-CALL packages\KoreBuild\build\kvm install default -runtime CoreCLR -x86
-CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86]]></param>
-          <param name="teamcity.step.mode" value="default" />
-          <param name="use.custom.script" value="true" />
-        </parameters>
-      </runner>
-    </build-runners>
-    <requirements />
+CALL packages\KoreBuild\build\dnvm upgrade -runtime CLR -x86
+CALL packages\KoreBuild\build\dnvm install default -runtime CoreCLR -x86
+CALL packages\KoreBuild\build\dnvm use default -runtime CLR -x86]]></param>
+		  <param name="teamcity.step.mode" value="default" />
+		  <param name="use.custom.script" value="true" />
+		</parameters>
+	  </runner>
+	</build-runners>
+	<requirements />
   </settings>
 </meta-runner>
 

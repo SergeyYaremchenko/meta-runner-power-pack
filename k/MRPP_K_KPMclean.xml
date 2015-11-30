@@ -2,24 +2,24 @@
 <meta-runner name="K - KPM clean">
   <description>Cleans the ASP.NET 5 project before build.</description>
   <settings>
-    <parameters>
-      <param name="mr.SourceFolder" value="%teamcity.build.workingDir%" spec="text description='Path to the folder where global.json is located.' validationMode='not_empty' label='Path to source code:' display='normal'" />
-    </parameters>
-    <build-runners>
-      <runner name="KPM clean" type="simpleRunner">
-        <parameters>
-          <param name="script.content"><![CDATA[@echo off
+	<parameters>
+	  <param name="mr.SourceFolder" value="%teamcity.build.workingDir%" spec="text description='Path to the folder where global.json is located.' validationMode='not_empty' label='Path to source code:' display='normal'" />
+	</parameters>
+	<build-runners>
+	  <runner name="KPM clean" type="simpleRunner">
+		<parameters>
+		  <param name="script.content"><![CDATA[@echo off
 cd %teamcity.build.workingDir%
 
 SETLOCAL
-CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86
+CALL packages\KoreBuild\build\dnvm use default -runtime CLR -x86
 @powershell -NoProfile -ExecutionPolicy unrestricted -Command "Get-ChildItem %mr.SourceFolder% "bin" -Directory -rec -erroraction 'silentlycontinue' | Remove-Item -Recurse; exit $Lastexitcode"]]></param>
-          <param name="teamcity.step.mode" value="default" />
-          <param name="use.custom.script" value="true" />
-        </parameters>
-      </runner>
-    </build-runners>
-    <requirements />
+		  <param name="teamcity.step.mode" value="default" />
+		  <param name="use.custom.script" value="true" />
+		</parameters>
+	  </runner>
+	</build-runners>
+	<requirements />
   </settings>
 </meta-runner>
 
